@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Hộp phấn minh hoạ">
+  <rect width="800" height="1000" fill="#e9e1d4"/>
+  <g transform="translate(400 540)">
+    <circle r="230" fill="#1a1a1a"/>
+    <circle r="196" fill="#1e3a32"/>
+    <circle r="120" fill="#c9b79a" opacity="0.4"/>
+    <circle r="230" fill="none" stroke="#c9b79a" stroke-width="4" stroke-opacity="0.6"/>
+  </g>
+  <line x1="120" y1="900" x2="680" y2="900" stroke="#1a1a1a" stroke-opacity="0.14"/>
+</svg>

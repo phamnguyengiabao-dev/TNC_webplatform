@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Token của showroom (docs/frontend/FRONTEND_DESIGN_BRIEF.md).
+ *
+ * Một mặt nền ấm, một mực than, MỘT màu nhấn duy nhất - lấy từ thuỷ tinh
+ * xanh trong ảnh tư liệu của bộ sưu tập - không gradient, bóng gần như bằng 0.
+ * Không component nào được hard-code mã màu; tất cả đi qua các biến này.
+ */
+:root {
+  /*
+   * Nền là giấy xương (bone) chứ không phải kem vàng: ấm nhưng ít chroma, để
+   * ảnh tư liệu và mực xanh là những thứ duy nhất có màu. Đá ấm giữ vai trò
+   * "warm beige" ở các bề mặt phụ.
+   */
+  --paper: #f0f1ea;
+  --field: #e5e3d8;
+  --field-soft: #eae9e0;
+  --field-strong: #dbd8c9;
+  --ink: #1a1a1a;
+  --ink-soft: #544f47;
+  --ink-faint: #a9a69d;
+  --rule: rgb(26 26 26 / 0.14);
+  --accent: #1e3a32;
+  --accent-ink: #f0f1ea;
+
+  /*
+   * Sáu bước chữ, cách nhau đủ xa để không thành "mush": 13 / 15 / 17 / 20 /
+   * 26-36 / 40-56. Không thêm bước nào ở giữa.
+   */
+  --step-small: 0.8125rem;
+  --step-note: 0.9375rem;
+  --step-body: 1.0625rem;
+  --step-lead: 1.25rem;
+  --step-title: clamp(1.625rem, 1.3rem + 1.4vw, 2.25rem);
+  --step-display: clamp(2.5rem, 4.6vw, 4.5rem);
+
+  --gap: clamp(1.5rem, 4vw, 4.5rem);
+  --page-x: clamp(1.25rem, 5vw, 5rem);
+  --radius: 20px;
+}
+
+@layer base {
+  * {
+    border-color: var(--rule);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: var(--step-body);
+    line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* Cỡ lớn cần siết chữ hơn cỡ nhỏ: tracking theo bước, không dùng một giá trị. */
+  h1 {
+    letter-spacing: -0.03em;
+  }
+
+  /* Chữ chạy luôn ở mực đầy; xám chỉ dành cho ghi chú phụ. */
+  p {
+    max-width: 62ch;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  a {
+    text-underline-offset: 0.25em;
+  }
+}
+
+@layer components {
+  /* Lưới nội dung dùng chung: một cặp lề cho toàn trang. */
+  .shelf {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: var(--page-x);
+  }
+
+  /* Nhãn chữ cho tình trạng sản phẩm - badge dạng chữ, không phải banner. */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--step-small);
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+  }
+
+  .tag::before {
+    content: '[';
+  }
+
+  .tag::after {
+    content: ']';
+  }
+
+  .link-underline {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

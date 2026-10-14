@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+.tmp/
+*.tsbuildinfo
+**/.next/
+**/.vercel/
+**/coverage/
+**/node_modules/
+frontend/out/
+
+# Local environment - never commit real credentials.
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

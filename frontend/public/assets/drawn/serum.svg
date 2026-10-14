@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Chai serum minh hoạ">
+  <rect width="800" height="1000" fill="#e9e1d4"/>
+  <g transform="translate(400 520)">
+    <rect x="-34" y="-330" width="68" height="120" rx="8" fill="#1a1a1a"/>
+    <rect x="-52" y="-210" width="104" height="480" rx="18" fill="#1e3a32"/>
+    <rect x="-52" y="-40" width="104" height="310" rx="18" fill="#c9b79a" opacity="0.35"/>
+    <rect x="-90" y="-110" width="180" height="10" rx="5" fill="#1a1a1a" opacity="0.2"/>
+  </g>
+  <line x1="120" y1="900" x2="680" y2="900" stroke="#1a1a1a" stroke-opacity="0.14"/>
+</svg>

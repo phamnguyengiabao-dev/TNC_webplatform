@@ -1,0 +1,599 @@
+// =============================================================================
+// TNC Web Platform - marketplace + internal ledger schema
+//
+// Design rules enforced here (see docs/banking-design-review.md):
+//   1. Money is NUMERIC(18,2). Never read it into a JS `number`.
+//   2. A balance is NEVER the source of truth. `LedgerEntry` is. `Wallet.balance`
+//      is a cached projection that must always equal SUM(entries) for that wallet.
+//   3. Every movement of money is a `LedgerTransfer` holding 2+ signed
+//      `LedgerEntry` legs whose amounts sum to exactly 0. Money can therefore
+//      never appear or vanish. A deferred DB trigger enforces this - see
+//      prisma/sql/finance_guards.sql.
+//   4. The ledger is append-only. Mistakes are corrected with a reversing
+//      transfer, never with an UPDATE or DELETE.
+//   5. "Pending" money is not a ledger state. Intent lives on Order /
+//      WithdrawalRequest; the ledger only records what actually moved.
+// =============================================================================
+
+datasource db {
+  provider  = "postgresql"
+  // Supabase transaction pooler, port 6543:
+  //   postgresql://...@...pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+  url       = env("DATABASE_URL")
+  // Supabase direct connection, port 5432. Used by `prisma migrate` only,
+  // because migrations need session-level statements the pooler cannot carry.
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// =============================================================================
+// Identity
+// =============================================================================
+
+/// Local mirror of `auth.users`. Prisma must not own the `auth` schema, so this
+/// table is kept in sync by a trigger on auth.users (see finance_guards.sql).
+/// Everything in our domain foreign-keys to this, not to auth.users directly,
+/// so we can never end up with an orphan wallet or order.
+model UserProfile {
+  id          String   @id @db.Uuid // equals auth.users.id
+  email       String?
+  displayName String?
+  phone       String?
+  role        UserRole @default(USER)
+  isBlocked   Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(6)
+
+  wallets            Wallet[]
+  ordersAsBuyer      Order[]             @relation("BuyerOrders")
+  ordersAsSeller     Order[]             @relation("SellerOrders")
+  payoutMethods      PayoutMethod[]
+  withdrawalRequests WithdrawalRequest[]
+
+  @@index([role])
+}
+
+enum UserRole {
+  USER
+  STAFF
+  ADMIN
+}
+
+// =============================================================================
+// Wallets
+// =============================================================================
+
+enum WalletKind {
+  /// End-user wallet. Balance is constrained to >= 0 at the DB level.
+  USER
+  /// Commission income. Credit-only in normal operation.
+  PLATFORM_REVENUE
+  /// Funds held between "buyer paid" and "order completed". This is what makes
+  /// a refund possible: the seller has not been credited yet.
+  ESCROW
+  /// Mirrors money crossing the boundary of our system via the payment
+  /// provider. Its balance is expected to be negative and equals, in absolute
+  /// value, the net amount ever funded in from outside. Reconcile it against
+  /// the PSP settlement report.
+  GATEWAY_CLEARING
+  /// A withdrawal is debited from the user the moment it is approved and parked
+  /// here, so the same money cannot be withdrawn twice while the bank transfer
+  /// is in flight.
+  WITHDRAWAL_CLEARING
+}
+
+model Wallet {
+  id   String     @id @default(uuid()) @db.Uuid
+  kind WalletKind @default(USER)
+
+  /// NULL for system wallets.
+  ownerId String?      @db.Uuid
+  owner   UserProfile? @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+
+  /// Stable handle for system wallets, e.g. "ESCROW". NULL for user wallets.
+  code String? @unique
+
+  currency String @default("VND") @db.Char(3)
+
+  /// Cached projection of SUM(entries.amount). Only ever moved by
+  /// LedgerService.post() through a guarded UPDATE.
+  balance Decimal @default(0) @db.Decimal(18, 2)
+
+  /// Bumped on every balance change. Useful for change detection and for
+  /// spotting lost updates during reconciliation.
+  version   Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  entries LedgerEntry[]
+
+  /// One wallet per user per currency. Postgres permits many NULLs in a unique
+  /// index, so system wallets are unaffected and are keyed by `code` instead.
+  @@unique([ownerId, currency])
+  @@index([kind])
+}
+
+// =============================================================================
+// Ledger
+// =============================================================================
+
+enum TransferKind {
+  /// GATEWAY_CLEARING -> user. Triggered by a verified PSP webhook.
+  DEPOSIT
+  /// user -> WITHDRAWAL_CLEARING. Posted when the request is approved.
+  WITHDRAWAL_REQUEST
+  /// WITHDRAWAL_CLEARING -> GATEWAY_CLEARING. Posted when the bank confirms.
+  WITHDRAWAL_SETTLED
+  /// buyer -> ESCROW. Posted at checkout.
+  ORDER_PAYMENT
+  /// ESCROW -> seller + PLATFORM_REVENUE. Posted when the order completes.
+  ORDER_RELEASE
+  /// ESCROW -> buyer. Cancellation or a resolved dispute.
+  ORDER_REFUND
+  /// Manual correction. Requires a reason and an actor; always audited.
+  ADJUSTMENT
+}
+
+enum TransferStatus {
+  POSTED
+  /// Superseded by a reversing transfer. The original rows stay untouched.
+  REVERSED
+}
+
+/// One atomic movement of money, made of balanced legs.
+model LedgerTransfer {
+  id     String         @id @default(uuid()) @db.Uuid
+  kind   TransferKind
+  status TransferStatus @default(POSTED)
+
+  /// The whole idempotency story in one column. A retried PSP webhook or a
+  /// double-clicked checkout hits this unique index and is rejected by the
+  /// database rather than by application logic that might race.
+  idempotencyKey String @unique
+
+  orderId String? @db.Uuid
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  /// PSP transaction id / bank reference. Not unique: a single external
+  /// reference can legitimately produce several transfers over its lifetime.
+  externalRef String?
+
+  description String?
+
+  /// Set on the correcting transfer, pointing at the one it cancels out.
+  reversalOfId String?         @unique @db.Uuid
+  reversalOf   LedgerTransfer? @relation("TransferReversal", fields: [reversalOfId], references: [id], onDelete: Restrict)
+  reversedBy   LedgerTransfer? @relation("TransferReversal")
+
+  /// Actor who caused this, taken from the JWT. NULL for scheduled/system jobs.
+  createdBy String?  @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  entries LedgerEntry[]
+
+  @@index([orderId])
+  @@index([kind, createdAt])
+  @@index([externalRef])
+}
+
+/// One signed leg of a transfer. Negative debits the wallet, positive credits it.
+/// Append-only: UPDATE and DELETE are blocked by a trigger.
+model LedgerEntry {
+  id String @id @default(uuid()) @db.Uuid
+
+  transferId String         @db.Uuid
+  transfer   LedgerTransfer @relation(fields: [transferId], references: [id], onDelete: Restrict)
+
+  walletId String @db.Uuid
+  wallet   Wallet @relation(fields: [walletId], references: [id], onDelete: Restrict)
+
+  amount Decimal @db.Decimal(18, 2)
+
+  /// Wallet balance immediately after this leg was applied, captured from the
+  /// guarded UPDATE's RETURNING clause. Lets you replay history and detect
+  /// drift without recomputing the whole ledger.
+  balanceAfter Decimal @db.Decimal(18, 2)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  // One leg per wallet per transfer: the service nets duplicates already, and
+  // this makes the database refuse them too. Doubles as the index the
+  // deferred balance trigger uses to re-read a transfer's legs at COMMIT.
+  @@unique([transferId, walletId])
+  @@index([walletId, createdAt(sort: Desc)])
+}
+
+// =============================================================================
+// Orders (stub - owned by the orders module, included here because the escrow
+// flow needs it. Expand with items, shipping, second-hand condition, etc.)
+// =============================================================================
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  READY_TO_SHIP
+  SHIPPED
+  DELIVERED
+  /// Terminal success: escrow has been released to the seller.
+  COMPLETED
+  CANCELLED
+  REFUNDED
+  DISPUTED
+}
+
+model Order {
+  id   String @id @default(uuid()) @db.Uuid
+  code String @unique
+
+  buyerId String      @db.Uuid
+  buyer   UserProfile @relation("BuyerOrders", fields: [buyerId], references: [id], onDelete: Restrict)
+
+  /// NULL for first-party retail orders (TNC is the seller).
+  sellerId String?      @db.Uuid
+  seller   UserProfile? @relation("SellerOrders", fields: [sellerId], references: [id], onDelete: Restrict)
+
+  /// What the buyer pays.
+  grossAmount Decimal @db.Decimal(18, 2)
+
+  /// Platform commission, frozen at checkout time so a later rate change cannot
+  /// retroactively alter settled orders. sellerAmount = grossAmount - commissionAmount.
+  commissionAmount Decimal @default(0) @db.Decimal(18, 2)
+
+  status OrderStatus @default(PENDING_PAYMENT)
+
+  paidAt     DateTime? @db.Timestamptz(6)
+  releasedAt DateTime? @db.Timestamptz(6)
+
+  version   Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  transfers LedgerTransfer[]
+
+  @@index([buyerId, createdAt(sort: Desc)])
+  @@index([sellerId, createdAt(sort: Desc)])
+  @@index([status])
+}
+
+// =============================================================================
+// Withdrawals
+// =============================================================================
+
+/// Bank details live in their own table so access can be restricted and so the
+/// account number is never carried around inside order or wallet payloads.
+model PayoutMethod {
+  id String @id @default(uuid()) @db.Uuid
+
+  ownerId String      @db.Uuid
+  owner   UserProfile @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  bankCode            String
+  /// Store masked for display, e.g. "****1234".
+  accountNumberMasked String
+  accountHolder       String
+  isVerified          Boolean  @default(false)
+  createdAt           DateTime @default(now()) @db.Timestamptz(6)
+
+  withdrawalRequests WithdrawalRequest[]
+
+  @@index([ownerId])
+}
+
+enum WithdrawalStatus {
+  REQUESTED
+  /// Approved and debited: the money now sits in WITHDRAWAL_CLEARING.
+  APPROVED
+  /// Bank confirmed. Terminal.
+  SETTLED
+  /// Rejected before any debit.
+  REJECTED
+  /// Failed at the bank after the debit; refunded by a reversing transfer.
+  FAILED
+}
+
+model WithdrawalRequest {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String      @db.Uuid
+  user   UserProfile @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  payoutMethodId String       @db.Uuid
+  payoutMethod   PayoutMethod @relation(fields: [payoutMethodId], references: [id], onDelete: Restrict)
+
+  amount Decimal          @db.Decimal(18, 2)
+  status WithdrawalStatus @default(REQUESTED)
+
+  reviewedBy String?   @db.Uuid
+  reviewedAt DateTime? @db.Timestamptz(6)
+  reason     String?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status])
+}
+
+// =============================================================================
+// API-level idempotency
+// =============================================================================
+
+enum IdempotencyState {
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// Protects non-ledger side effects too (emails, PSP calls, order creation).
+/// Same key + same payload replays the stored response; same key + different
+/// payload is a 409.
+model IdempotencyRecord {
+  key         String @id
+  userId      String @db.Uuid
+  endpoint    String
+  requestHash String
+
+  state        IdempotencyState @default(IN_PROGRESS)
+  statusCode   Int?
+  responseBody Json?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt DateTime @db.Timestamptz(6)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([expiresAt])
+}
+
+// =============================================================================
+// Audit trail
+// =============================================================================
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  entityType String
+  entityId   String
+  action     String
+  oldStatus  String?
+  newStatus  String?
+  reason     String?
+  actorId    String?  @db.Uuid
+  actorRole  String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  occurredAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([entityType, entityId, occurredAt(sort: Desc)])
+  @@index([actorId, occurredAt(sort: Desc)])
+}
+
+// =============================================================================
+// Shopee sync / showroom catalog (docs/backend/SHOPEE_SHOWROOM_BACKEND.md)
+//
+// Shopee is the source of truth for commerce data (price, stock, status).
+// These tables mirror it locally so the showroom can serve reads without
+// calling Shopee on every request. Sync never hard-deletes: items that
+// disappear from the source are flagged (NOT_SEEN), not dropped.
+// =============================================================================
+
+model ShopeeShop {
+  id           String    @id @default(uuid()) @db.Uuid
+  shopeeShopId BigInt    @unique
+  name         String
+  region       String    @default("vn")
+  lastSyncAt   DateTime? @db.Timestamptz(6)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(6)
+
+  items ShopeeItem[]
+  runs  SyncRun[]
+}
+
+enum ShopeeItemStatus {
+  NORMAL
+  UNLIST
+  BANNED
+  DELETED
+  /// Khong con thay trong lan sync gan nhat; chua an cho toi khi qua han.
+  NOT_SEEN
+}
+
+model ShopeeItem {
+  id         String           @id @default(uuid()) @db.Uuid
+  shopId     String           @db.Uuid
+  shop       ShopeeShop       @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  itemId     BigInt
+  itemName   String
+  itemStatus ShopeeItemStatus @default(NORMAL)
+
+  /// Gia hien thi (min model neu co bien the). NUMERIC, whole dong.
+  price    Decimal? @db.Decimal(12, 2)
+  priceMin Decimal? @db.Decimal(12, 2)
+  priceMax Decimal? @db.Decimal(12, 2)
+  stock    Int?
+  hasModel Boolean  @default(false)
+  /// Link tracking từ Shopee Affiliate; không thay thế buyUrlOverride do staff quản lý.
+  affiliateUrl String?
+
+  imageUrls        Json      @default("[]")
+  description      String?
+  shopeeUpdateTime DateTime? @db.Timestamptz(6)
+
+  /// sha256 cua cac truong commerce; doi hash = co cap nhat that.
+  contentHash String
+  /// Du lieu goc cua lan sync gan nhat (audit).
+  raw         Json?
+
+  firstSeenAt DateTime @default(now()) @db.Timestamptz(6)
+  lastSeenAt  DateTime @db.Timestamptz(6)
+
+  models ShopeeItemModel[]
+  /// Cua so trung bay cua showroom tren item nay; NULL khi chua duoc chon.
+  product Product?
+
+  @@unique([shopId, itemId])
+  @@index([itemStatus])
+  @@index([lastSeenAt])
+}
+
+model ShopeeItemModel {
+  id      String     @id @default(uuid()) @db.Uuid
+  itemRef String     @db.Uuid
+  item    ShopeeItem @relation(fields: [itemRef], references: [id], onDelete: Cascade)
+  /// ID phân loại của Shopee hoặc SKU do người bán đặt; giữ nguyên dạng chuỗi.
+  modelId String
+  name    String
+  price   Decimal?   @db.Decimal(12, 2)
+  stock   Int?
+
+  @@unique([itemRef, modelId])
+}
+
+enum SyncProvider {
+  CSV
+  AFFILIATE
+  OPEN_PLATFORM
+}
+
+enum SyncMode {
+  FULL
+  INCREMENTAL
+  MANUAL_IMPORT
+}
+
+enum SyncRunStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
+  PARTIAL
+}
+
+model SyncRun {
+  id       String        @id @default(uuid()) @db.Uuid
+  shopId   String?       @db.Uuid
+  shop     ShopeeShop?   @relation(fields: [shopId], references: [id], onDelete: SetNull)
+  provider SyncProvider
+  mode     SyncMode
+  status   SyncRunStatus @default(RUNNING)
+
+  /// { receivedRows, itemsParsed, created, updated, unchanged, errors, notSeen }
+  stats      Json?
+  /// Ai chay (UserProfile.id) - import thu cong luon co.
+  startedBy  String? @db.Uuid
+  /// File goc duoc luu o dau (local path / Supabase Storage ref).
+  storageRef String?
+
+  startedAt  DateTime  @default(now()) @db.Timestamptz(6)
+  finishedAt DateTime? @db.Timestamptz(6)
+
+  errors SyncError[]
+
+  @@index([startedAt(sort: Desc)])
+  @@index([status])
+}
+
+model SyncError {
+  id      String  @id @default(uuid()) @db.Uuid
+  runId   String  @db.Uuid
+  run     SyncRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  /// Dong nao trong file (1-based, khong tinh header) hoac item id.
+  itemRef String?
+  code    String
+  message String
+  raw     Json?
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([runId])
+}
+
+// =============================================================================
+// Showroom catalog & curation (docs/backend/SHOPEE_SHOWROOM_BACKEND.md 3-4)
+//
+// Shopee owns commerce data (price, stock, status). The showroom owns
+// presentation: which items are on display, in which collection, with which
+// copy. A Product is a curated window onto a ShopeeItem - never a second
+// source of price or stock.
+// =============================================================================
+
+model Collection {
+  id        String   @id @default(uuid()) @db.Uuid
+  /// pristine-retail | curated-preloved (seeded by the migration).
+  slug      String   @unique
+  title     String
+  subtitle  String?
+  /// Hero content: { eyebrow, note, accent, imageUrl, ... }
+  theme     Json?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  products Product[]
+
+  @@index([sortOrder])
+}
+
+enum ProductVisibility {
+  /// Created but not on the storefront yet.
+  DRAFT
+  /// Live on the storefront.
+  PUBLISHED
+  /// Taken down by the sync policy: the Shopee item is BANNED/DELETED, or it
+  /// has been NOT_SEEN for longer than the configured hide window.
+  HIDDEN_BY_SYNC
+}
+
+model Product {
+  id   String @id @default(uuid()) @db.Uuid
+  slug String @unique
+
+  /// NULL on purpose: a pre-loved piece may be shown without a Shopee listing,
+  /// in which case `buyUrlOverride` carries the purchase/contact link.
+  shopeeItemId String?     @unique @db.Uuid
+  shopeeItem   ShopeeItem? @relation(fields: [shopeeItemId], references: [id], onDelete: SetNull)
+
+  collectionId String     @db.Uuid
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Restrict)
+
+  /// Overrides the synced Shopee title when present (showroom copy wins).
+  displayTitle String?
+  blurb        String?
+  /// Pre-loved only: % of the original volume left (1..100).
+  conditionPercent Int?
+  /// nguyen seal | da mo | da quet thu | da dung ...
+  sealStatus String?
+  /// Trust block: { sterilized, origin, authenticity, expiresOn, ... }
+  qaNotes    Json?
+  badges     Json    @default("[]")
+
+  visibility     ProductVisibility @default(DRAFT)
+  featuredRank   Int?
+  buyUrlOverride String?
+  publishedAt    DateTime?         @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  clicks OutboundClick[]
+
+  @@index([collectionId, visibility])
+  @@index([visibility, publishedAt(sort: Desc)])
+  @@index([featuredRank])
+}
+
+/// One row per "Mua tren Shopee" click. Only hashes of the client signal are
+/// stored - never the raw IP or user agent.
+model OutboundClick {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  occurredAt DateTime @default(now()) @db.Timestamptz(6)
+  uaHash    String?
+  ipHash    String?
+  referrer  String?
+
+  @@index([productId, occurredAt(sort: Desc)])
+  @@index([occurredAt(sort: Desc)])
+}

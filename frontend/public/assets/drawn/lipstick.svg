@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-label="Son thỏi minh hoạ">
+  <rect width="800" height="1000" fill="#e9e1d4"/>
+  <g transform="translate(400 520)">
+    <rect x="-46" y="-330" width="92" height="230" rx="14" fill="#1e3a32"/>
+    <path d="M-46 -100 L46 -100 L38 -60 L-38 -60 Z" fill="#c9b79a"/>
+    <rect x="-56" y="-60" width="112" height="360" rx="10" fill="#1a1a1a"/>
+    <rect x="-56" y="60" width="112" height="14" fill="#c9b79a" opacity="0.5"/>
+  </g>
+  <line x1="120" y1="900" x2="680" y2="900" stroke="#1a1a1a" stroke-opacity="0.14"/>
+</svg>

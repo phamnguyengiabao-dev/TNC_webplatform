@@ -1,0 +1,889 @@
+{
+ "url": "http://localhost:3000/san-pham",
+ "at": "2026-10-14T08:40:29.449Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 4,
+   "filled": [
+    0.37,
+    0.43,
+    0.58,
+    0.29
+   ],
+   "motion": {
+    "elements": 19,
+    "css": 0,
+    "transitions": 16,
+    "scripted": 3,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 3582,
+     "screens": 4,
+     "words": 413,
+     "img": 11,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 2,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 11,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "image?url=%2Fassets%2Ftangee-face-powder.jpg&w=6",
+      "image?url=%2Fassets%2Fvioletta-lipstick.jpg&w=64",
+      "image?url=%2Fassets%2Fperfume-bottles.jpg&w=640&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fdressing-table-inlaid-with",
+      "image?url=%2Fassets%2Fdressing-table-mirror.jpg&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fmakeup-table1886.jpg&w=640"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "chars": 16,
+     "lines": 1,
+     "size": 36,
+     "vw": 2.5,
+     "font": "Newsreader",
+     "weight": 500,
+     "tracking": -0.03,
+     "leading": 1.05,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.79,
+     "top": 152,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "lines": 1,
+     "size": 36,
+     "font": "Newsreader"
+    },
+    "headings": [
+     {
+      "text": "Toàn bộ showroom",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 36,
+      "vw": 2.5,
+      "font": "Newsreader",
+      "weight": 500,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.79,
+      "top": 152,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Work Sans",
+       "share": 0.77,
+       "mono": false
+      },
+      {
+       "family": "Newsreader",
+       "share": 0.23,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      13,
+      15,
+      17,
+      20,
+      36
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Work Sans",
+      "size": 13,
+      "leading": 1.63,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.3
+     },
+     "measureChars": 57,
+     "max": {
+      "size": 36,
+      "vw": 2.5,
+      "font": "Newsreader",
+      "text": "Toàn bộ showroom"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.06,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f0f1ea",
+     "bodyBgHsl": {
+      "h": 69,
+      "s": 0.2,
+      "l": 0.93
+     },
+     "dark": false,
+     "sectionBgs": [],
+     "textColors": [
+      {
+       "color": "#5a5750",
+       "share": 0.67
+      },
+      {
+       "color": "#1a1a1a",
+       "share": 0.32
+      },
+      {
+       "color": "#f0f1ea",
+       "share": 0.01
+      }
+     ],
+     "button": null,
+     "lowContrast": [
+      {
+       "text": "Toàn bộ showroom",
+       "ratio": 1,
+       "need": 4.5,
+       "size": 17,
+       "fg": "#f0f1ea",
+       "bg": "#f0f1ea"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 0,
+     "inHero": 0,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 12,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 11,
+     "mediaRadius": 20,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.12
+     },
+     {
+      "type": "img",
+      "ratio": 0.12
+     },
+     {
+      "type": "img",
+      "ratio": 0.12
+     }
+    ],
+    "nav": {
+     "links": 4,
+     "fixed": false,
+     "height": 96,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "newsreader",
+     "newsreader fallback",
+     "work sans",
+     "work sans fallback",
+     "__nextjs-geist"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 5,
+   "filled": [
+    0.47,
+    0.66,
+    0.5,
+    0.65,
+    0.47
+   ],
+   "motion": {
+    "elements": 19,
+    "css": 0,
+    "transitions": 16,
+    "scripted": 3,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 4827,
+     "screens": 4.7,
+     "words": 413,
+     "img": 11,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 2,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 11,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "image?url=%2Fassets%2Ftangee-face-powder.jpg&w=3",
+      "image?url=%2Fassets%2Fvioletta-lipstick.jpg&w=38",
+      "image?url=%2Fassets%2Fperfume-bottles.jpg&w=384&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fdressing-table-inlaid-with",
+      "image?url=%2Fassets%2Fdressing-table-mirror.jpg&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fmakeup-table1886.jpg&w=384"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "chars": 16,
+     "lines": 1,
+     "size": 31.6,
+     "vw": 4.1,
+     "font": "Newsreader",
+     "weight": 500,
+     "tracking": -0.03,
+     "leading": 1.05,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.9,
+     "top": 152,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "lines": 1,
+     "size": 31.6,
+     "font": "Newsreader"
+    },
+    "headings": [
+     {
+      "text": "Toàn bộ showroom",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 31.6,
+      "vw": 4.1,
+      "font": "Newsreader",
+      "weight": 500,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.9,
+      "top": 152,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Work Sans",
+       "share": 0.77,
+       "mono": false
+      },
+      {
+       "family": "Newsreader",
+       "share": 0.23,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      13,
+      15,
+      17,
+      20,
+      32
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Work Sans",
+      "size": 13,
+      "leading": 1.63,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.3
+     },
+     "measureChars": 57,
+     "max": {
+      "size": 31.6,
+      "vw": 4.1,
+      "font": "Newsreader",
+      "text": "Toàn bộ showroom"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.06,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f0f1ea",
+     "bodyBgHsl": {
+      "h": 69,
+      "s": 0.2,
+      "l": 0.93
+     },
+     "dark": false,
+     "sectionBgs": [],
+     "textColors": [
+      {
+       "color": "#5a5750",
+       "share": 0.67
+      },
+      {
+       "color": "#1a1a1a",
+       "share": 0.32
+      },
+      {
+       "color": "#f0f1ea",
+       "share": 0.01
+      }
+     ],
+     "button": null,
+     "lowContrast": [
+      {
+       "text": "Toàn bộ showroom",
+       "ratio": 1,
+       "need": 4.5,
+       "size": 17,
+       "fg": "#f0f1ea",
+       "bg": "#f0f1ea"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 0,
+     "inHero": 0,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 12,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 11,
+     "mediaRadius": 20,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.17
+     },
+     {
+      "type": "img",
+      "ratio": 0.17
+     }
+    ],
+    "nav": {
+     "links": 4,
+     "fixed": false,
+     "height": 96,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "newsreader",
+     "newsreader fallback",
+     "work sans",
+     "work sans fallback",
+     "__nextjs-geist"
+    ]
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 11,
+   "filled": [
+    0.51,
+    0.76,
+    0.59,
+    0.72,
+    0.73,
+    0.65,
+    0.59,
+    0.68,
+    0.69,
+    0.59,
+    0.36
+   ],
+   "motion": {
+    "elements": 19,
+    "css": 0,
+    "transitions": 16,
+    "scripted": 3,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 9008,
+     "screens": 10.7,
+     "words": 413,
+     "img": 11,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 2,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 11,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [
+      "image?url=%2Fassets%2Ftangee-face-powder.jpg&w=3",
+      "image?url=%2Fassets%2Fvioletta-lipstick.jpg&w=38",
+      "image?url=%2Fassets%2Fperfume-bottles.jpg&w=384&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fdressing-table-inlaid-with",
+      "image?url=%2Fassets%2Fdressing-table-mirror.jpg&",
+      "image?url=%2Fassets%2Fcompact-powder-am-1995-202",
+      "image?url=%2Fassets%2Fmakeup-table1886.jpg&w=384"
+     ],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": []
+    },
+    "hero": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "chars": 16,
+     "lines": 1,
+     "size": 26.3,
+     "vw": 6.7,
+     "font": "Newsreader",
+     "weight": 500,
+     "tracking": -0.03,
+     "leading": 1.05,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "left",
+     "position": "center",
+     "widthRatio": 0.9,
+     "top": 184,
+     "tag": "h1",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Toàn bộ showroom",
+     "words": 3,
+     "lines": 1,
+     "size": 26.3,
+     "font": "Newsreader"
+    },
+    "headings": [
+     {
+      "text": "Toàn bộ showroom",
+      "words": 3,
+      "chars": 16,
+      "lines": 1,
+      "size": 26.3,
+      "vw": 6.7,
+      "font": "Newsreader",
+      "weight": 500,
+      "tracking": -0.03,
+      "leading": 1.05,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.9,
+      "top": 184,
+      "tag": "h1",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 1,
+     "maxLines": 1,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "Work Sans",
+       "share": 0.77,
+       "mono": false
+      },
+      {
+       "family": "Newsreader",
+       "share": 0.23,
+       "mono": false
+      }
+     ],
+     "familyCount": 2,
+     "sizes": [
+      13,
+      15,
+      17,
+      20,
+      26
+     ],
+     "sizeCount": 5,
+     "notLoaded": [],
+     "body": {
+      "font": "Work Sans",
+      "size": 13,
+      "leading": 1.63,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.3
+     },
+     "measureChars": 41,
+     "max": {
+      "size": 26.3,
+      "vw": 6.7,
+      "font": "Newsreader",
+      "text": "Toàn bộ showroom"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.06,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#f0f1ea",
+     "bodyBgHsl": {
+      "h": 69,
+      "s": 0.2,
+      "l": 0.93
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#e5e3d8",
+       "top": 703,
+       "hsl": {
+        "h": 51,
+        "s": 0.2,
+        "l": 0.87
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#5a5750",
+       "share": 0.67
+      },
+      {
+       "color": "#1a1a1a",
+       "share": 0.32
+      },
+      {
+       "color": "#f0f1ea",
+       "share": 0.01
+      }
+     ],
+     "button": null,
+     "lowContrast": [
+      {
+       "text": "Toàn bộ showroom",
+       "ratio": 1,
+       "need": 4.5,
+       "size": 17,
+       "fg": "#f0f1ea",
+       "bg": "#f0f1ea"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 0,
+     "inHero": 0,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": []
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 0,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 12,
+     "boxRadius": 20,
+     "squareMedia": 0,
+     "roundedMedia": 11,
+     "mediaRadius": 20,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "img",
+      "ratio": 0.15
+     }
+    ],
+    "nav": {
+     "links": 4,
+     "fixed": false,
+     "height": 128,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "newsreader",
+     "newsreader fallback",
+     "work sans",
+     "work sans fallback",
+     "__nextjs-geist"
+    ]
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Unreadable text: \"Toàn bộ showroom\" 1:1 (#f0f1ea on #f0f1ea)",
+   "fix": "Raise contrast to at least 4.5:1 for text, 3:1 for large display.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "body-size",
+   "width": 1440,
+   "message": "Body text is 13px (the size most of the running text is set in).",
+   "fix": "Body copy 16–20px. Map small sizes from blueprints onto your body step.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "grey-body",
+   "width": 1440,
+   "message": "The running text is a soft grey on its ground (6.3:1).",
+   "fix": "Set body copy in the full ink (7:1 or more). Keep the muted ink for secondary notes; pages read thin and unfinished when everything is grey.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "first-action",
+   "width": 1440,
+   "message": "No visible button in the first screen.",
+   "fix": "Give the one primary action a real button in the first screen (a filled or solid-bordered control, 44px or taller), not only a link in the navigation.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  },
+  {
+   "level": "FAIL",
+   "id": "focal-point",
+   "width": 1440,
+   "message": "The first screen has no dominant element: the largest type is 36px (2.5vw) and no single picture holds a third of the viewport.",
+   "fix": "Make one thing lead: the headline at display size, or one large picture. A grid of many small pictures is not one thing; in blind tests jurors marked a first screen without a headline down every time. On the strongest studied sites the largest type has a median of 8.4vw.",
+   "alsoAt": [
+    768
+   ]
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\desktop-fold.jpg",
+   "pages": [
+    "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\desktop-page-01.jpg"
+   ]
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\tablet-fold.jpg",
+   "pages": [
+    "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\tablet-page-01.jpg"
+   ]
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\mobile-fold.jpg",
+   "pages": [
+    "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\mobile-page-01.jpg",
+    "D:\\Coding\\Thanh Nhàn Cosmetic\\TNC_webplatform\\.taste-skill\\inspect-shelf\\mobile-page-02.jpg"
+   ]
+  }
+ ]
+}
