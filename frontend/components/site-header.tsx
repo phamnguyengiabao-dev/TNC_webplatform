@@ -3,11 +3,11 @@ import Link from 'next/link';
 /** Điều hướng tối giản: hai lối vào bộ sưu tập, không menu nhiều tầng. */
 export function SiteHeader() {
   return (
-    <header className="shelf flex items-baseline justify-between py-8">
-      <Link href="/" className="font-display text-lead tracking-tight">
+    <header className="shelf flex flex-wrap items-baseline justify-between gap-y-5 py-8">
+      <Link href="/" className="shrink-0 font-display text-lead tracking-tight">
         Thanh Nhàn <span className="text-ink-soft">Cosmetic</span>
       </Link>
-      <nav className="flex items-center gap-7 text-note">
+      <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-note sm:gap-x-7">
         <Link href="/san-pham?collection=pristine-retail" className="hover:underline">
           Hàng mới
         </Link>
@@ -16,6 +16,9 @@ export function SiteHeader() {
         </Link>
         <Link href="/san-pham" className="link-underline">
           Toàn bộ showroom
+        </Link>
+        <Link href="/thu-vien-anh" className="hover:underline">
+          Thư viện ảnh
         </Link>
       </nav>
     </header>

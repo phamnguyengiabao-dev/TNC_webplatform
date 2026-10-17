@@ -63,6 +63,12 @@ export default () => {
       affiliateEndpoint: stripTrailingSlashes(process.env.SHOPEE_AFFILIATE_ENDPOINT) || 'https://open-api.affiliate.shopee.vn/graphql',
       affiliateRefreshIntervalMs: parseInteger(process.env.SYNC_AFFILIATE_INTERVAL_MS, 4 * 60 * 60 * 1000),
     },
+    meta: {
+      accessToken: process.env.META_ACCESS_TOKEN ?? '',
+      facebookPageId: process.env.META_FACEBOOK_PAGE_ID ?? '',
+      instagramAccountId: process.env.META_INSTAGRAM_ACCOUNT_ID ?? '',
+      graphVersion: process.env.META_GRAPH_VERSION ?? 'v26.0',
+    },
     auth: {
       /** Supabase project URL; the JWKS URL and issuer are derived from it. */
       supabaseUrl,

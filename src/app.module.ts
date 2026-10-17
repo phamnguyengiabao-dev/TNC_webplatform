@@ -13,6 +13,7 @@ import { IdempotencyInterceptor } from './modules/idempotency/idempotency.interc
 import { IdempotencyModule } from './modules/idempotency/idempotency.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { SyncModule } from './modules/sync/sync.module';
+import { SocialMediaModule } from './modules/social-media/social-media.module';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { PrismaModule } from './prisma/prisma.module';
 
@@ -39,6 +40,7 @@ import { PrismaModule } from './prisma/prisma.module';
     WalletModule,
     OrdersModule,
     SyncModule,
+    SocialMediaModule,
   ],
   providers: [
     {

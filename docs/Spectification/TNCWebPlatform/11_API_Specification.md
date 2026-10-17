@@ -546,6 +546,7 @@ Response:
 | 409 | `IDEMPOTENCY_IN_PROGRESS` | Request cùng key đang xử lý | Idempotency interceptor |
 | 409 | `SYNC_ALREADY_RUNNING` | Đang có sync run chạy | Module sync (S2) |
 | 409 | `SHOPEE_NOT_CONNECTED` | Chưa cấu hình gian hàng/credential Shopee | Module sync (S2) |
+| 409 | `META_NOT_CONNECTED` | Chưa cấu hình Meta Page/Instagram và access token | Social media sync |
 | 409 | `ITEM_NOT_LINKED` | Product chưa gắn item Shopee | Module curation (S3) |
 | 410 | `PRODUCT_UNLISTED` | Sản phẩm đã ẩn/ngừng bán theo sync | Module catalog (S3) |
 | 422 | `IMPORT_FILE_INVALID` | File import sai định dạng/không đọc được | Module sync (S2) |

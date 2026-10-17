@@ -8,7 +8,7 @@ catalog, không xử lý thanh toán.
 
 - Backend: NestJS, TypeScript, Prisma, PostgreSQL/Supabase.
 - Frontend: Next.js App Router, TypeScript, Tailwind CSS, Framer Motion.
-- Shopee sync: Seller Center CSV; Affiliate Open API đang triển khai.
+- Đồng bộ dữ liệu: Shopee (CSV/Affiliate) và thư viện ảnh Meta (Facebook Page + Instagram Professional).
 
 ## Bắt đầu
 
@@ -37,3 +37,27 @@ Backend API chạy dưới `/api/v1` trên cổng `3001`; storefront dev server 
 - [Cấu hình triển khai](docs/deployment/DEPLOYMENT.md)
 
 Không commit `.env`, `frontend/.env.local` hoặc credentials Shopee/Supabase.
+
+## Đồng bộ ảnh Facebook và Instagram
+
+Luồng khách xem ảnh đã chọn tại `/thu-vien-anh`. Admin đăng nhập ở `/admin/social-media`, đồng bộ bài đăng, chọn từng ảnh trong bài đăng/carousel, rồi công khai hoặc ẩn ảnh. Mỗi bài đăng Meta mới được nhập ở trạng thái chờ duyệt; ảnh này không tự gắn vào sản phẩm Shopee.
+
+Backend cần `META_ACCESS_TOKEN`, `META_FACEBOOK_PAGE_ID` và/hoặc `META_INSTAGRAM_ACCOUNT_ID` trong `.env`. Dùng Page access token có `pages_read_engagement`; Instagram phải là tài khoản Professional được liên kết với Page và app phải có quyền `instagram_basic`. Token chỉ nằm ở backend, không đặt trong frontend. Chạy migration bằng `npm run db:deploy`.
+
+Frontend cần `NEXT_PUBLIC_SUPABASE_URL` và `NEXT_PUBLIC_SUPABASE_ANON_KEY` trong `frontend/.env.local`. Meta credentials và quyền App Review phụ thuộc cấu hình của tài khoản Meta; xem [hướng dẫn sync social](docs/backend/META_SOCIAL_SYNC.md).
+
+### Hai danh tính thử nghiệm
+
+Tạo hai người dùng trong Supabase Auth của project dev (email xác minh tắt hoặc xác minh email trước khi đăng nhập), sau đó gán role trong `public."UserProfile"`:
+
+| Vai trò | Email thử nghiệm | Luồng kiểm tra |
+| --- | --- | --- |
+| USER | `user.test@tnc.local` | Mở `/thu-vien-anh`; ảnh đang chờ/ẩn không được trả về. |
+| ADMIN | `admin.test@tnc.local` | Đăng nhập tại `/admin/social-media`; chạy sync, công khai và ẩn ảnh. |
+
+Đặt mật khẩu riêng trong Supabase Auth khi tạo hai tài khoản; không ghi mật khẩu hoặc access token vào README. Gán quyền admin sau khi tạo user:
+
+```sql
+UPDATE public."UserProfile" SET role = 'ADMIN' WHERE email = 'admin.test@tnc.local';
+UPDATE public."UserProfile" SET role = 'USER' WHERE email = 'user.test@tnc.local';
+```

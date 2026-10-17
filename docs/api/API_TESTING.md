@@ -439,3 +439,20 @@ select id, provider, mode, status, stats, started_at, finished_at
 select item_id, item_name, price, stock, item_status, last_seen_at
   from "ShopeeItem" order by last_seen_at desc limit 20;
 ```
+
+## 15. Thư viện ảnh Meta
+
+Sau khi áp dụng migration `20261017120000_add_meta_social_library`, cấu hình
+`META_ACCESS_TOKEN` cùng Facebook Page ID và/hoặc Instagram Professional Account
+ID ở backend. Tạo tài khoản `admin.test@tnc.local` trong Supabase Auth rồi gán
+role `ADMIN` theo README.
+
+| Vai trò | Request | Kỳ vọng |
+| --- | --- | --- |
+| Public / USER | `GET /api/v1/social-media` | Chỉ trả ảnh `PUBLIC`; trả rỗng khi chưa có ảnh được duyệt |
+| ADMIN | `GET /api/v1/admin/social-media?visibility=PENDING` | Danh sách chờ duyệt |
+| ADMIN | `POST /api/v1/admin/social-media/sync` + `Idempotency-Key` | Nhập media Meta mới ở trạng thái `PENDING`, tạo `SyncRun` provider `META` |
+| ADMIN | `PATCH /api/v1/admin/social-media/{id}/visibility` body `{"visibility":"PUBLIC","selectedMediaUrls":["https://...jpg"]}` | Chỉ ảnh được chọn xuất hiện ở endpoint public |
+| USER | `POST /api/v1/admin/social-media/sync` | `403 FORBIDDEN` |
+
+UI: `/thu-vien-anh` cho khách; `/admin/social-media` cho ADMIN.

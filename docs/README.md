@@ -15,6 +15,7 @@ Cấu trúc thư mục theo chuẩn chung của các dự án (xem `docs_example
 | Banking core (ledger, escrow, hoa hồng, ví hệ thống) | ⏸️ Legacy mô hình cũ — ngừng phát triển, chờ gỡ |
 | HTTP API `/api/v1` (`health`, `/health/db`, `/me`) | ✅ code + e2e + smoke test; `/wallet*`, `/orders/{id}/pay-wallet` thuộc mô hình cũ |
 | **Shopee showroom backend** | ✅ S2 CSV + S3 catalog/curation API; 🟨 S4 Affiliate provider/scheduler đã code và test, chờ cấu hình credentials + reconciliation; S5 Open Platform cần Shopee duyệt (xem [đặc tả](backend/SHOPEE_SHOWROOM_BACKEND.md)) |
+| **Meta social media** | 🟨 Đồng bộ Facebook/Instagram + thư viện ảnh chờ admin duyệt; cần migration và Meta credentials (xem [đặc tả](backend/META_SOCIAL_SYNC.md)) |
 | Auth guard (Supabase JWT qua JWKS ES256/RS256 hoặc HS256), ProblemDetail RFC 7807, Idempotency-Key | ✅ |
 | Frontend Next.js | 🟨 storefront công khai đã có trang chủ/catalog/PDP; admin curation, auth và các màn staff còn theo kế hoạch — xem [07](Spectification/TNCWebPlatform/07_Frontend.md) + [design brief](frontend/FRONTEND_DESIGN_BRIEF.md) |
 
@@ -49,6 +50,7 @@ Cấu trúc thư mục theo chuẩn chung của các dự án (xem `docs_example
 | [deployment/DEPLOYMENT.md](deployment/DEPLOYMENT.md) | Hướng dẫn deploy Supabase + NestJS + Vercel |
 | [SPRINT_SETUP_AND_ENDPOINT_TESTING.md](SPRINT_SETUP_AND_ENDPOINT_TESTING.md) | Sprint HTTP đã hoàn thành: setup, kết quả test endpoint, bằng chứng |
 | [backend/SHOPEE_SHOWROOM_BACKEND.md](backend/SHOPEE_SHOWROOM_BACKEND.md) | **Đặc tả backend mới**: showroom + đồng bộ Shopee, data model, API, lộ trình |
+| [backend/META_SOCIAL_SYNC.md](backend/META_SOCIAL_SYNC.md) | Đồng bộ Facebook/Instagram và thư viện ảnh public/admin |
 | [frontend/FRONTEND_DESIGN_BRIEF.md](frontend/FRONTEND_DESIGN_BRIEF.md) | Design brief frontend: ngôn ngữ thị giác, taste dial, badge tình trạng, PDP, prompt mẫu |
 
 ### Tài liệu nội bộ khác

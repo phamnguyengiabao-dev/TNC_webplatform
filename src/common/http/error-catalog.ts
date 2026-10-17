@@ -33,6 +33,7 @@ export const ERROR_CODES = [
   'CONFLICT',
   'SYNC_ALREADY_RUNNING',
   'SHOPEE_NOT_CONNECTED',
+  'META_NOT_CONNECTED',
   'ITEM_NOT_LINKED',
   'ITEM_ALREADY_LINKED',
   'SLUG_TAKEN',
@@ -179,6 +180,11 @@ export const ERROR_CATALOG: Record<ErrorCode, ErrorDescriptor> = {
     status: 409,
     title: 'Shopee not connected',
     detail: 'Chưa cấu hình kết nối gian hàng Shopee cho thao tác này.',
+  },
+  META_NOT_CONNECTED: {
+    status: 409,
+    title: 'Meta not connected',
+    detail: 'Chưa cấu hình kết nối Facebook/Instagram cho thao tác này.',
   },
   ITEM_NOT_LINKED: {
     status: 409,

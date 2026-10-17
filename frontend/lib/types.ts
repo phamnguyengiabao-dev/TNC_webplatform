@@ -66,6 +66,24 @@ export interface CollectionList {
   items: CollectionView[];
 }
 
+export interface SocialMediaItemView {
+  id: string;
+  platform: 'FACEBOOK' | 'INSTAGRAM';
+  externalId: string;
+  caption: string | null;
+  mediaType: string;
+  mediaUrls: string[];
+  selectedMediaUrls: string[];
+  permalink: string | null;
+  publishedAt: string | null;
+  visibility: 'PENDING' | 'PUBLIC' | 'HIDDEN';
+  lastSeenAt: string;
+}
+
+export interface SocialMediaList {
+  items: SocialMediaItemView[];
+}
+
 export type CatalogSort = 'newest' | 'featured' | 'price_asc' | 'price_desc';
 
 export interface CatalogQuery {

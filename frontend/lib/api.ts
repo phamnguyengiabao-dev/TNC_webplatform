@@ -4,6 +4,7 @@ import type {
   CollectionList,
   ProductDetailView,
   ProductPage,
+  SocialMediaList,
 } from './types';
 
 /** Lỗi có `code` ổn định - UI dịch qua bảng nhãn, không hiển thị tiếng Anh. */
@@ -91,4 +92,8 @@ export const catalogApi = {
 
   product: (slug: string, options?: FetchOptions) =>
     apiGet<ProductDetailView>(`/catalog/products/${encodeURIComponent(slug)}`, options),
+};
+
+export const socialMediaApi = {
+  publicItems: () => apiGet<SocialMediaList>('/social-media'),
 };

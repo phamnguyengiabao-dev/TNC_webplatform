@@ -11,8 +11,8 @@ export class SyncRunDto {
 
 export class SyncRunQueryDto {
   @IsOptional()
-  @IsIn(['CSV', 'AFFILIATE', 'OPEN_PLATFORM'])
-  provider?: 'CSV' | 'AFFILIATE' | 'OPEN_PLATFORM';
+  @IsIn(['CSV', 'AFFILIATE', 'OPEN_PLATFORM', 'META'])
+  provider?: 'CSV' | 'AFFILIATE' | 'OPEN_PLATFORM' | 'META';
 
   @IsOptional()
   @IsIn(['RUNNING', 'SUCCEEDED', 'FAILED', 'PARTIAL'])

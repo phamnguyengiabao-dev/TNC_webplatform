@@ -409,11 +409,11 @@ model ShopeeItem {
   itemStatus ShopeeItemStatus @default(NORMAL)
 
   /// Gia hien thi (min model neu co bien the). NUMERIC, whole dong.
-  price    Decimal? @db.Decimal(12, 2)
-  priceMin Decimal? @db.Decimal(12, 2)
-  priceMax Decimal? @db.Decimal(12, 2)
-  stock    Int?
-  hasModel Boolean  @default(false)
+  price        Decimal? @db.Decimal(12, 2)
+  priceMin     Decimal? @db.Decimal(12, 2)
+  priceMax     Decimal? @db.Decimal(12, 2)
+  stock        Int?
+  hasModel     Boolean  @default(false)
   /// Link tracking từ Shopee Affiliate; không thay thế buyUrlOverride do staff quản lý.
   affiliateUrl String?
 
@@ -429,7 +429,7 @@ model ShopeeItem {
   firstSeenAt DateTime @default(now()) @db.Timestamptz(6)
   lastSeenAt  DateTime @db.Timestamptz(6)
 
-  models ShopeeItemModel[]
+  models  ShopeeItemModel[]
   /// Cua so trung bay cua showroom tren item nay; NULL khi chua duoc chon.
   product Product?
 
@@ -455,6 +455,7 @@ enum SyncProvider {
   CSV
   AFFILIATE
   OPEN_PLATFORM
+  META
 }
 
 enum SyncMode {
@@ -509,6 +510,41 @@ model SyncError {
   @@index([runId])
 }
 
+enum SocialMediaPlatform {
+  FACEBOOK
+  INSTAGRAM
+}
+
+enum SocialMediaVisibility {
+  PENDING
+  PUBLIC
+  HIDDEN
+}
+
+/// Ảnh/bài đăng do Meta đồng bộ; tách khỏi catalog và nguồn thương mại Shopee.
+model SocialMediaItem {
+  id                String                @id @default(uuid()) @db.Uuid
+  platform          SocialMediaPlatform
+  externalId        String
+  caption           String?
+  mediaType         String
+  mediaUrls         Json                  @default("[]")
+  selectedMediaUrls Json                  @default("[]")
+  permalink         String?
+  publishedAt       DateTime?             @db.Timestamptz(6)
+  visibility        SocialMediaVisibility @default(PENDING)
+  lastSeenAt        DateTime              @default(now()) @db.Timestamptz(6)
+  reviewedBy        String?               @db.Uuid
+  reviewedAt        DateTime?             @db.Timestamptz(6)
+  raw               Json?
+  createdAt         DateTime              @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime              @updatedAt @db.Timestamptz(6)
+
+  @@unique([platform, externalId])
+  @@index([visibility, publishedAt(sort: Desc)])
+  @@index([platform, publishedAt(sort: Desc)])
+}
+
 // =============================================================================
 // Showroom catalog & curation (docs/backend/SHOPEE_SHOWROOM_BACKEND.md 3-4)
 //
@@ -558,15 +594,15 @@ model Product {
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Restrict)
 
   /// Overrides the synced Shopee title when present (showroom copy wins).
-  displayTitle String?
-  blurb        String?
+  displayTitle     String?
+  blurb            String?
   /// Pre-loved only: % of the original volume left (1..100).
   conditionPercent Int?
   /// nguyen seal | da mo | da quet thu | da dung ...
-  sealStatus String?
+  sealStatus       String?
   /// Trust block: { sterilized, origin, authenticity, expiresOn, ... }
-  qaNotes    Json?
-  badges     Json    @default("[]")
+  qaNotes          Json?
+  badges           Json    @default("[]")
 
   visibility     ProductVisibility @default(DRAFT)
   featuredRank   Int?
@@ -586,13 +622,13 @@ model Product {
 /// One row per "Mua tren Shopee" click. Only hashes of the client signal are
 /// stored - never the raw IP or user agent.
 model OutboundClick {
-  id        String   @id @default(uuid()) @db.Uuid
-  productId String   @db.Uuid
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  id         String   @id @default(uuid()) @db.Uuid
+  productId  String   @db.Uuid
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   occurredAt DateTime @default(now()) @db.Timestamptz(6)
-  uaHash    String?
-  ipHash    String?
-  referrer  String?
+  uaHash     String?
+  ipHash     String?
+  referrer   String?
 
   @@index([productId, occurredAt(sort: Desc)])
   @@index([occurredAt(sort: Desc)])
